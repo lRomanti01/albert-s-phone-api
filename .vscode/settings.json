@@ -1,0 +1,7 @@
+{
+  "conventionalCommits.scopes": [
+    "User",
+    "Patients, User, Zones, Articles",
+    "Comercial, Reminders, HistoryUserQuotes, Status"
+  ]
+}
