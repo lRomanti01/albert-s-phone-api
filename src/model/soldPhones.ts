@@ -6,6 +6,9 @@ export interface soldPhones extends mongoose.Document {
   user: Types.ObjectId;
   amount: string;
   client: string;
+  price: string;
+  total: number;
+  createdAt: Date;
 }
 
 const soldPhonesSchema = new Schema({
@@ -17,7 +20,7 @@ const soldPhonesSchema = new Schema({
   user: {
     type: Schema.Types.ObjectId,
     ref: "User",
-    require: true,
+    require: false,
   },
   client: {
     type: String,
@@ -28,6 +31,20 @@ const soldPhonesSchema = new Schema({
     type: Number,
     require: false,
     default: 0,
+  },
+  price: {
+    type: Number,
+    require: false,
+    default: 0,
+  },
+  total: {
+    type: Number,
+    require: false,
+    default: 0,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
   },
 });
 

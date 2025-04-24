@@ -47,23 +47,13 @@ const createUser = async (req: Request, res: Response) => {
 
 const getUsers = async (req: Request, res: Response) => {
   try {
-    const { limit, initial } = req.params;
-
-    const limitNum = parseInt(limit) || 10;
-    const initialNum = parseInt(initial) || 0;
-
     const roles = await getRoleByCode("ADMIN");
-
-    const count = await User.count({ isDeleted: false });
     const users = await User.find({ role: { $ne: roles }, isDeleted: false })
       .populate("role")
-      .skip(initialNum)
-      .limit(limitNum);
 
     res.status(200).send({
       ok: true,
       users,
-      count,
       mensaje: "Usuarios encontrados con éxito",
       message: "Users found successfully",
     });
@@ -191,8 +181,8 @@ const searchUsers = async (req: Request, res: Response) => {
 
 const deleteUser = async (req: Request, res: Response) => {
   try {
-    const { _id } = req.params;
-    await User.updateOne({ _id }, { isDeleted: true });
+    const { id } = req.params;
+    await User.findByIdAndUpdate(id, { isDeleted: true });
 
     res.status(201).send({
       ok: true,

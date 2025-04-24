@@ -38,7 +38,7 @@ userRouter.put(
 
 // Get
 
-userRouter.get("/getUsers/:limit/:initial", [token.validarJWT], user.getUsers);
+userRouter.get("/getUsers", user.getUsers);
 
 userRouter.get(
   "/getUsersByRole/:limit/:initial/:code",
@@ -48,6 +48,6 @@ userRouter.get(
 
 // Delete
 
-userRouter.delete("/deleteUser/:_id", [token.validarJWT], user.deleteUser);
+userRouter.delete("/deleteUser/:id", user.deleteUser);
 
 export default userRouter;

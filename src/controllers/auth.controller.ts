@@ -3,12 +3,21 @@ import bcrypt from "bcrypt";
 import { generarJWT } from "../helper/create-jwt";
 import User from "../model/user";
 
-const loginPanel = async (req: Request, res: Response) => {
+const login = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
-    const user = await User.findOne({ email }).populate({ path: "role" })
+    const user = await User.findOne({ email }).populate({ path: "role" });
 
-    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (!user) {
+      return res.status(404).json({
+        ok: false,
+        message: "Wrong email or password",
+        mensaje: "Correo o contraseña equivocada",
+        status: 404,
+      });
+    }
+
+    const passwordMatch = await bcrypt.compare(password, user?.password);
     if (!passwordMatch) {
       return res.status(404).json({
         ok: false,
@@ -38,6 +47,7 @@ const loginPanel = async (req: Request, res: Response) => {
     res.status(200).send({
       ok: true,
       message: "Welcome",
+      mensaje: "Bienvenido",
       user,
       token,
     });
@@ -51,4 +61,4 @@ const loginPanel = async (req: Request, res: Response) => {
   }
 };
 
-export { loginPanel };
+export { login };

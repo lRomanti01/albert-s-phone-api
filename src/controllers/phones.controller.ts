@@ -77,7 +77,7 @@ const updatePhone = async (req: Request, res: Response) => {
 const deletePhone = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    
+
     const phone = await Phones.findByIdAndDelete(id);
 
     res.status(200).send({
@@ -99,30 +99,59 @@ const deletePhone = async (req: Request, res: Response) => {
 
 const createSoldPhones = async (req: Request, res: Response) => {
   try {
-    const { ...data } = req.body;
-    const createSoldPhones: soldPhones = new SoldPhones({ ...data });
-    await createSoldPhones.save();
+    const data = req.body;
 
-    res.status(201).send({
+    // Verificamos si existe el celular
+    const phone = await Phones.findById(data.phone);
+    if (!phone) {
+      return res.status(404).json({
+        ok: false,
+        mensaje: "Celular no encontrado",
+        message: "Phone not found",
+      });
+    }
+
+    // Verificamos que haya suficiente cantidad disponible
+    const availableAmount = Number(phone.amount);
+    const amountToSell = Number(data.amount);
+
+    if (amountToSell > availableAmount) {
+      return res.status(400).json({
+        ok: false,
+        mensaje: "Cantidad a vender excede el stock disponible",
+        message: "Quantity to sell exceeds available stock",
+      });
+    }
+
+    // Actualizamos el stock
+    await Phones.findByIdAndUpdate(data.phone, {
+      amount: availableAmount - amountToSell,
+    });
+
+    // Creamos el registro de venta
+    const soldPhone = new SoldPhones({ ...data });
+    await soldPhone.save();
+
+    res.status(201).json({
       ok: true,
-      soldPhones: createSoldPhones,
+      soldPhones: soldPhone,
       mensaje: "Celular vendido registrado con éxito",
       message: "Phone sold registered successfully",
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).json({
       ok: false,
       error,
       mensaje: "¡Ups! Algo salió mal",
-      message: "Ups! Something went wrong",
+      message: "Oops! Something went wrong",
     });
   }
 };
 
 const getSoldPhones = async (req: Request, res: Response) => {
   try {
-    const soldPhones = await SoldPhones.find({ code: { $ne: "ADMIN" } });
+    const soldPhones = await SoldPhones.find().populate("phone").populate("user");
 
     res.status(200).send({
       ok: true,
@@ -144,7 +173,8 @@ const getSoldPhones = async (req: Request, res: Response) => {
 export {
   createPhone,
   getPhones,
-  updatePhone, deletePhone,
+  updatePhone,
+  deletePhone,
   createSoldPhones,
   getSoldPhones,
 };
