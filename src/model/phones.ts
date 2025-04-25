@@ -10,7 +10,8 @@ export interface phones extends mongoose.Document {
   battery: string;
   price: string;
   amount: string;
-  image: string
+  image: string;
+  isDeleted: boolean;
 }
 
 const phonesSchema = new Schema({
@@ -30,6 +31,11 @@ const phonesSchema = new Schema({
     default: "",
   },
   screen: {
+    type: String,
+    require: false,
+    default: "",
+  },
+  storage: {
     type: String,
     require: false,
     default: "",
@@ -58,6 +64,10 @@ const phonesSchema = new Schema({
     type: Number,
     require: false,
     default: 0,
+  },
+  isDeleted: {
+    type: Boolean,
+    default: false,
   },
 });
 

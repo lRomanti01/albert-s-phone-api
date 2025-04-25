@@ -44,6 +44,10 @@ const userSchema = new Schema({
     ref: "Roles",
     require: true,
   },
+  code: {
+    type: String,
+    require: false,
+  },
   created_at: {
     type: String,
     default: new Date().toISOString(),

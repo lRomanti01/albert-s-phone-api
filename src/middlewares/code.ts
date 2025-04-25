@@ -1,4 +1,4 @@
-import role from "../model/role";
+import Role, { role } from "../model/role";
 import User, { user } from "../model/user";
 import { Types } from "mongoose";
 
@@ -19,10 +19,10 @@ const getUserByCode = async (value: string) => {
 
 const getRoleByCode = async (value: string) => {
   try {
-    const code = await role.findOne({
+    const code = await Role.findOne({
       code: value,
     });
-    if (code._id) {
+    if (code?._id) {
       return new Types.ObjectId(code._id);
     }
 

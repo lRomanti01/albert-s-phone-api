@@ -27,7 +27,7 @@ const createPhone = async (req: Request, res: Response) => {
 
 const getPhones = async (req: Request, res: Response) => {
   try {
-    const phones = await Phones.find({ code: { $ne: "ADMIN" } });
+    const phones = await Phones.find({ isDeleted: false});
 
     res.status(200).send({
       ok: true,
@@ -78,7 +78,7 @@ const deletePhone = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
-    const phone = await Phones.findByIdAndDelete(id);
+    const phone = await Phones.findByIdAndUpdate(id, { isDeleted: true });
 
     res.status(200).send({
       ok: true,
